@@ -15,6 +15,10 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+
+import API from '@/api'
+
+import CategorySelect from '@/components/CategorySelect'
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -34,7 +38,8 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
-
+Vue.prototype.$API = API
+Vue.component(CategorySelect.name, CategorySelect)
 new Vue({
   el: '#app',
   router,

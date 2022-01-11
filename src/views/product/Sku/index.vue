@@ -4,10 +4,9 @@
 
 <script>
 export default {
-    name:'Sku'
+  name: 'Sku'
 }
 </script>
 
 <style>
-
 </style>
