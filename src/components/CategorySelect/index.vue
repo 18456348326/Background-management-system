@@ -79,7 +79,7 @@ export default {
       this.cgFromid.cgFromid3 = ''
       this.$emit('getCategoryId', { id: this.cgFromid.cgFromid1, level: 1 })
       let result = await this.$API.attr.reqCategoryList2(this.cgFromid.cgFromid1)
-      console.log(result)
+      // console.log(result)
       if (result.code == 200) {
         this.cgFromList.list2 = result.data
       }
@@ -90,7 +90,7 @@ export default {
       this.cgFromid.cgFromid3 = ''
       this.$emit('getCategoryId', { id: this.cgFromid.cgFromid2, level: 2 })
       let result = await this.$API.attr.reqCategoryList3(this.cgFromid.cgFromid2)
-      console.log(result)
+      // console.log(result)
       if (result.code == 200) {
         this.cgFromList.list3 = result.data
       }
