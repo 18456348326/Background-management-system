@@ -25,3 +25,10 @@ export const reqGetAttrInfoList = (category1Id, category2Id, category3Id) => req
 // 添加属性名和属性值的接口
 // /admin/product/saveAttrInfo
 export const reqAddAttr = (data) => request({ url: "/admin/product/saveAttrInfo", method: 'post', data })
+
+
+
+// 删除属性的接口
+// /admin/product/deleteAttr/{attrId}
+export const reqDeleteAttr = (attrId) => request({ url: `/admin/product/deleteAttr/${attrId}`, method: "delete" })
+

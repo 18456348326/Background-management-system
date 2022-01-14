@@ -6,7 +6,8 @@
       <el-form-item label="一级分类">
         <el-select v-model="cgFromid.cgFromid1"
                    placeholder="请选择"
-                   @change='handler1'>
+                   @change='handler1'
+                   :disabled='show'>
           <el-option :label="L1.name"
                      :value="L1.id"
                      v-for="(L1,index) in cgFromList.list1"
@@ -16,7 +17,8 @@
       <el-form-item label="二级分类">
         <el-select v-model="cgFromid.cgFromid2"
                    placeholder="请选择"
-                   @change='handler2'>
+                   @change='handler2'
+                   :disabled='show'>
           <el-option :label="L2.name"
                      :value="L2.id"
                      v-for="(L2,index) in cgFromList.list2"
@@ -27,7 +29,8 @@
       <el-form-item label="三级分类">
         <el-select v-model="cgFromid.cgFromid3"
                    placeholder="请选择"
-                   @change='handler3'>
+                   @change='handler3'
+                   :disabled='show'>
           <el-option :label="L3.name"
                      :value="L3.id"
                      v-for="(L3,index) in cgFromList.list3"
@@ -60,6 +63,7 @@ export default {
     }
   },
   // 当组件一挂载完毕就拿到一级分类数据并渲染
+  props: ['show'],
   mounted () {
     this.getCategory1List()
   },
