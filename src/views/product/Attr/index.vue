@@ -39,12 +39,15 @@
             <template slot-scope="{row,$index}">
               <el-button type="warning"
                          icon='el-icon-edit'
-                         @click="updateAttr(row)"></el-button>
+                         @click="updateAttr(row)"
+                         size='mini'
+                         style="margin:0px 10px"></el-button>
               <el-popconfirm :title='`确定删除${row.attrName}吗？`'
                              @onConfirm='deleteAttr(row.id)'>
                 <el-button type="danger"
                            icon='el-icon-delete'
-                           slot="reference"></el-button>
+                           slot="reference"
+                           size='mini'></el-button>
               </el-popconfirm>
             </template>
           </el-table-column>
