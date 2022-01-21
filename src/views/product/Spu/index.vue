@@ -28,7 +28,8 @@
               <el-button type="success"
                          icon='el-icon-plus'
                          size='mini'
-                         title="添加sku"></el-button>
+                         title="添加sku"
+                         @click="addSku(row)"></el-button>
               <el-button type="warning"
                          icon='el-icon-edit'
                          size='mini'
@@ -63,7 +64,8 @@
       <SpuForm v-show="scene==1"
                @changeScene='changeScene'
                ref="spuForm"></SpuForm>
-      <SkuForm v-show="scene==2"></SkuForm>
+      <SkuForm v-show="scene==2"
+               ref="skuForm"></SkuForm>
     </el-card>
   </div>
 
@@ -165,9 +167,22 @@ export default {
           message: '删除成功',
           type: 'success'
         })
-        this.getSpuList()
+        if (this.spuList.length > 1) {
+          this.getSpuList()
+        } else {
+          this.pagination.page = this.pagination.page - 1
+          this.getSpuList()
+        }
+
+
       }
+    },
+    // 点击添加sku按钮的回调
+    addSku (row) {
+      this.scene = 2
+      this.$refs.skuForm.getData(row, this.cgId.id1, this.cgId.id2, this.cgId.id3)
     }
+
   }
 }
 </script>
