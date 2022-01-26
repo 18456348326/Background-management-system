@@ -38,7 +38,8 @@
               <el-button type="info"
                          icon='el-icon-info'
                          size='mini'
-                         title="查看当前spu上的全部sku"></el-button>
+                         title="查看当前spu上的全部sku"
+                         @click="handler(row)"></el-button>
               <el-popconfirm :title='`确定删除${row.spuName}?`'
                              @onConfirm='deleteSpu(row)'
                              style="margin:10px">
@@ -65,8 +66,31 @@
                @changeScene='changeScene'
                ref="spuForm"></SpuForm>
       <SkuForm v-show="scene==2"
-               ref="skuForm"></SkuForm>
+               ref="skuForm"
+               @changeScenes='changeScenes'></SkuForm>
+
     </el-card>
+    <el-dialog :title="`${spu.spuName}的sku列表`"
+               :visible.sync="dialogTableVisible"
+               :before-close='close'>
+      <el-table :data="skuList"
+                v-loading="loading">
+        <el-table-column property="skuName"
+                         label="名称"
+                         width="150"></el-table-column>
+        <el-table-column property="price"
+                         label="价格"
+                         width="200"></el-table-column>
+        <el-table-column property="weight"
+                         label="重量"></el-table-column>
+        <el-table-column label="默认图片">
+          <template slot-scope="{row,$index}">
+            <img :src="row.skuDefaultImg"
+                 style="width:100px;height:100px">
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 
 </template>
@@ -95,6 +119,10 @@ export default {
       spuList: [],
       // 控制下方操作页面切换
       scene: 0, //0代表切换spu列表展示，1代表切换spu添加修改界面 ，2代表切换添加sku修改界面
+      dialogTableVisible: false,
+      spu: {},
+      skuList: [],
+      loading: true
     }
   },
   components: {
@@ -147,7 +175,7 @@ export default {
       // console.log(this.$refs.spuForm)
       this.$refs.spuForm.initSpuForm(row)
     },
-    // 自定义事件，用于切换场景
+    // spuform自定义事件，用于切换场景
     changeScene ({ scene, flag }) {
       this.scene = scene;
       // 子组件切换完要刷新页面
@@ -181,8 +209,28 @@ export default {
     addSku (row) {
       this.scene = 2
       this.$refs.skuForm.getData(row, this.cgId.id1, this.cgId.id2, this.cgId.id3)
-    }
+    },
+    // skuForm的切换场景方法
+    changeScenes (scene) {
+      this.scene = scene
+    },
+    async handler (row) {
 
+      this.dialogTableVisible = true
+      this.spu = row
+      // 获取sku列表数据
+      let result = await this.$API.spu.reqSkuList(this.spu.id)
+      // console.log(result)
+      if (result.code == 200) {
+        this.loading = false
+        this.skuList = result.data
+      }
+    }, close (done) {
+      done()
+      this.loading = true
+      this.skuList = []
+
+    }
   }
 }
 </script>

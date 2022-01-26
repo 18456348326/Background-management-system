@@ -30,7 +30,7 @@
                         :key="item1.id">
             <el-select placeholder="请选择"
                        v-model="item1.attrIdAndvalueId">
-              <el-option :value='`${item2.id}:${item1.id}`'
+              <el-option :value='`${item1.id}:${item2.id}`'
                          :label='item2.valueName'
                          v-for="(item2,index) in item1.attrValueList"
                          :key="item2.id"></el-option>
@@ -46,7 +46,7 @@
                         :key="item1.id">
             <el-select placeholder="请选择"
                        v-model="item1.saleIdAndValueId">
-              <el-option :value='`${item2.id}:${item1.id}`'
+              <el-option :value='`${item1.id}:${item2.id}`'
                          :label='item2.saleAttrValueName'
                          v-for="(item2,index) in item1.spuSaleAttrValueList"
                          :key="item2.id"></el-option>
@@ -78,8 +78,9 @@
         </el-table>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
-        <el-button>取消</el-button>
+        <el-button type="primary"
+                   @click="save">保存</el-button>
+        <el-button @click="cancel">取消</el-button>
       </el-form-item>
     </el-form>
 
@@ -155,7 +156,7 @@ export default {
       this.skuInfo.spuId = row.id;
       this.skuInfo.tmId = row.tmId
       this.spu = row
-      let spuImageListresult = await this.$API.sku.reqGetSpuImageList(row.id)
+      let spuImageListresult = await this.$API.spu.reqGetSkuImageList(row.id)
       if (spuImageListresult.code == 200) {
         console.log(spuImageListresult)
         let list = spuImageListresult.data
@@ -164,12 +165,12 @@ export default {
         });
         this.spuImageList = list
       }
-      let saleAttrListresult = await this.$API.sku.reqGetSpuSaleAttrList(row.id)
+      let saleAttrListresult = await this.$API.spu.reqGetSpuSaleAttrList(row.id)
       if (saleAttrListresult.code == 200) {
         console.log(saleAttrListresult)
         this.saleAttrList = saleAttrListresult.data;
       }
-      let attrInfoListresult = await this.$API.sku.reqGetAttrInfoList(id1, id2, id3)
+      let attrInfoListresult = await this.$API.spu.reqGetAttrInfoList(id1, id2, id3)
       if (attrInfoListresult) {
         console.log(attrInfoListresult)
         this.attrInfoList = attrInfoListresult.data
@@ -181,6 +182,7 @@ export default {
       // 注意这个数据里缺少选中的默认
       this.imgList = params;
     },
+    // 改变默认状态的回调
     changDefault (row) {
       // 排他
       this.spuImageList.forEach(item => {
@@ -189,6 +191,51 @@ export default {
       row.isDefault = 1
       // 收集默认图片的地址
       this.skuInfo.skuDefaultImg = row.imgUrl;
+    },
+    // 取消按钮的回调
+    cancel () {
+      this.$emit('changeScenes', 0)
+      Object.assign(this._data, this.$options.data())
+    },
+    // 保存按钮的点击回调
+    async save () {
+      const { attrInfoList, skuInfo, saleAttrList, spuImageList } = this
+      // 平台属性数据整理
+      let arr = []
+      attrInfoList.forEach((item) => {
+        if (item.attrIdAndvalueId) {
+          const [attrId, valueId] = item.attrIdAndvalueId.split(':')
+          let obj = { valueId, attrId }
+          arr.push(obj)
+        }
+      })
+      skuInfo.skuAttrValueList = arr
+      // 销售属性整理数据
+      let saleArr = []
+      saleAttrList.forEach((item) => {
+        if (item.saleIdAndValueId) {
+          const [saleId, salevalueId] = item.saleIdAndValueId.split(":")
+          let saleObj = { salevalueId, saleId }
+          saleArr.push(saleObj)
+        }
+      })
+      skuInfo.skuSaleAttrValueList = saleArr
+      skuInfo.skuImageList = spuImageList.map(item => {
+        return {
+          imgName: item.imgName,
+          imgUrl: item.imgUrl,
+          isDefault: item.isDefault,
+          spuImgId: item.id
+        }
+      })
+      skuInfo.price = parseInt(skuInfo.price)
+      console.log(skuInfo)
+      let result = await this.$API.spu.reqAddSku(skuInfo)
+      console.log(result)
+      if (result.code == 200) {
+        this.$message({ message: '保存成功', type: 'success' })
+        this.$emit('changeScenes', 0)
+      }
     }
   }
 }
